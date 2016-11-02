@@ -2,7 +2,9 @@
 
 # Installation script based on WinX TP script, from B00merang
 # Author: Elbullazul (Christian Medel)
-# Date: 10/24/16
+# Co-Authoring and Testing: brandleesee (Brandon Camilleri)
+# Date: 11/02/16
+# Revision 4.1
 
 # Defining global variables
 Website="http://b00merang.weebly.com"
@@ -17,33 +19,37 @@ appleturl="/usr/share/cinnamon/applets"
 stylesurl="/usr/share/styles"
 
 # Set themes to install
-theme="Windows 10 Light" #alternative: Windows 10 Dark
+theme="Windows 10 Light" # alternative: Windows 10 Dark
 icon_theme="Windows 10"
 
-# Developers only - enable testing mode, now file download required
+# Developers only - enable testing mode, use local resources
 testing="no"
 
 # Variable defining whether install is local/global
 locvar="global"
 
 # TransPack versioning variables
-version="1.2.1-release"
+version="1.4.1-release"
 
 # Force install a DE
 override='false'
 
+# Functions START #
+
 # ------------------------------ PREPARING TMP ENVIRONMENT FUNCTION ------------------------------- #
+
+# This function makes directories, fetch files by calling get_zip()
+# and renames folders to continue with execution
 get_tmp() {
 
   # Switch to green text
   tput setaf 2;
 
-  # Add state to log
+  # Add progress to log
   echo 'Creating TMP environment' >>"$LOG"
 
   # Remove TMP if present, avoid duplicates
-
-  if [ -d tmp ]; then
+  if [ -d tmp ]; then # If directory `tmp` exists
     echo "Removing previous installation resources..." | tee -a "$LOG"
     rm -rf tmp
   fi
@@ -56,12 +62,15 @@ get_tmp() {
   if [ "$testing" == "no" ]; then
     get_zip
   else
+    # elsewise, copy resources to tmp
     echo "Getting files locally..."
-    printf "\n"
+    printf "\n" # skip line
     cp ../RES/* "$TMP"
   fi
 
-  # checksums verification
+  # checksums verification (disabled, waiting to set updatable verification
+  # feature will not be using SHA512 as hash
+  
 #  sumcheck="$(cat "$1" | grep SHA512)"
 #  sum=${sumcheck#"SHA512: "}
 
@@ -74,10 +83,8 @@ get_tmp() {
 #    exit
 #  fi
 
-  # 
-
   # Verify files are REALLY here and avoid continuing if not
-  if [ ! -e master.zip ]; then
+  if [ ! -e master.zip ]; then # if file does NOT exist
     tput setaf 1; echo "" | tee -a "$LOG"
     exit
   fi
@@ -92,32 +99,33 @@ get_tmp() {
     exit
   fi
 
-  # Unzip files
+  # Unzip files & store first output line to variable
   zipgtk=$(unzip master.zip | sed -n '1p')
   zipicon=$(unzip icons.zip | sed -n '1p')
   zipx11=$(unzip windows_x11.zip | sed -n '1p')
 
-  # Register first line of unzip command to get eventual errors
+  # Store variable to track eventual errors
   echo "$zipgtk" >>"$LOG"
   echo "$zipicon" >>"$LOG"
   echo "$zipx11" >>"$LOG"
 
-  # Rename themes Folder
+  # Rename master themes Folder
   mv Windows-10-master GTK
 
-  # Rename Icon folder
+  # Rename icon folder
   mv Windows-10-icons "$icon_theme"
 
   # Go to white text
   tput setaf 7;
 
-  # Security for function operation
+  # Security for function operation (useless?)
   cd "$TMP"
 
 }
 
 # ---------------------------- DOWNLOAD ZIP FILES FUNCTION ----------------------------- #
 
+# Function downloading latest themes, icons & X11 theme
 get_zip() {
 
   # Download from rolling branch
@@ -136,75 +144,67 @@ get_zip() {
 
 # ------------------------------ REMOVE CLUTTER FUNCTION ------------------------------- #
 
+# This function deletes useless folders in all theme folders to avoid cluttering & reduce size
 clean() {
 
 # Security measure
   cd "$TMP"
 
 # Variables allowing to pass all parameters
-  runtimes="$1"
-  runs=1
+  runtimes="$1"        # get first argument and use it for the while loop
+  runs=1               # runtracker in while loop (replace with for?)
 
 # Parameters array for easier processing
-  declare -a files
-  files=("$@")
+  declare -a files     # define a new bash array
+  files=("$@")         # give
 
   cd GTK
 
 # Remove files light/dark theme
-  while [[ $runs -le $runtimes ]]
+  while [[ $runs -le $runtimes ]] # while execution < run times required
   do
-    rm -rf */"${files[$runs]}"
-    runs=$(($runs+1))
+    rm -rf */"${files[$runs]}"    # remove directories in active array item in all sub-folders
+    runs=$(($runs+1))             # update actual runtimes
   done
 
-#  cd "../Windows 10 Dark"
-
-# Remove same files in dark theme
-#  runs=1
-#  while [[ $runs -le $runtimes ]]
-#  do
-#    rm -rf "${files[$runs]}"
-#    runs=$(($runs+1))
-#  done
-
 # Returning to TMP
-
   cd "$TMP"
 }
 
 # ------------------------------ GLOBAL THEME INSTALL FUNCTION ------------------------------- #
 
+# This function copies themes and icons folders to /usr/share for system-wide availability
 install_theme() {
 
-  cd "$TMP/GTK"
+  cd "$TMP/GTK" # enter GTK themes folder
 
 # Move theme folders to chosen emplacement
-  sudo cp -f -a Windows\ 10\ Light "$themeurl"
+  sudo cp -f -a Windows\ 10\ Light "$themeurl"  # force copy folder to default path
   sudo cp -f -a Windows\ 10\ Dark "$themeurl"
 
 # Make readable for all users
-  sudo chown root "$themeurl/Windows 10 Light" "$themeurl/Windows 10 Dark"
-  sudo chmod +wr -R "$themeurl/Windows 10 Light" "$themeurl/Windows 10 Dark"
+  sudo chown root "$themeurl/Windows 10 Light" "$themeurl/Windows 10 Dark"   # make root own this files to avoid permissions bug
+  sudo chmod +wr -R "$themeurl/Windows 10 Light" "$themeurl/Windows 10 Dark" # add Read attributes to selected folders
 
 # Install Icon & X11 themes
   cd ..
-  sudo cp -f -a "$icon_theme" "$iconurl"
+  sudo cp -f -a "$icon_theme" "$iconurl" # copy icon theme to default path.
+  
+  # Make icon theme readable for all users
+  sudo chown root "$iconurl/$icon_theme"
+  sudo chmod +r -R "$iconurl/$icon_theme"
 
   # Since X11 theme is not in rolling state, we can disable force-install
-  if [ ! -d "$iconurl/win8" ]; then
+  if [ ! -d "$iconurl/win8" ]; then # if directory PATH/win8 does not exist, install X11 theme
     sudo cp -a win8 "$iconurl"
     sudo chown root "$iconurl/win8"
     sudo chmod +r -R "$iconurl/win8"
   fi
-
-# Make icon theme readable for all users
-  sudo chown root "$iconurl/$icon_theme"
-  sudo chmod +r -R "$iconurl/$icon_theme"
 }
 
 # ------------------------------ LOCAL THEME APPLIANCE FUNCTION ------------------------------- #
 
+# This function copies themes and icons to home folder instead, no SUDO required
 install_theme_local() {
   cd "$TMP/GTK"
 
@@ -216,8 +216,6 @@ install_theme_local() {
 # Copy icon theme to corresponding folders
   cp -a "$icon_theme" "$iconurl"
 
-ls
-
   # Since X11 theme is not in rolling state, we can disable force-install
   if [ ! -d "$iconurl/win8" ]; then
     cp -a win8 "$iconurl"
@@ -227,33 +225,34 @@ ls
 
 # ------------------------------ APPLET DOWNLOAD FUNCTION ------------------------------- #
 
+# For cinnamon only: install windows-like applets and copy them to ~/.local/share/cinnamon/applets
 applet_get() {
 
   # Window-list
   wget -q --show-progress http://b00merang.weebly.com/uploads/1/6/8/1/16813022/windowlistgroup_jake.phy_gmail.com.zip
 
-  zipwlg=$(unzip windowlistgroup_jake.phy_gmail.com.zip | sed -n '1p')
-
   # Slingshot launcher
   wget -q --show-progress http://b00merang.weebly.com/uploads/1/6/8/1/16813022/slingshot_jfarthing84.zip
 
+  # Unzip & store first output line
+  zipwlg=$(unzip windowlistgroup_jake.phy_gmail.com.zip | sed -n '1p')
   zipsng=$(unzip slingshot_jfarthing84.zip | sed -n '1p')
 
-  # Save unzip result
+  # Save unzip result to Log
   echo "$zipwlg" >>"$LOG"
   echo "$zipsng" >>"$LOG"
 }
 
 # ------------------------------ THEME APPLIANCE FUNCTION ------------------------------- #
 
+# Apply recently installed theme & icon themes, apply wallpaper (make user choose?)
 apply_theme() {
 
 # Here is where DE variable gets important
-
   tput setaf 3; echo "Applying changes to $DE" | tee -a "$LOG"
 
+# Apply themes depending on Desktop environments
   case $DE in
-
     cinnamon)
       gsettings set org.cinnamon.theme name "$theme"
       gsettings set org.cinnamon.desktop.interface gtk-theme "$theme"
@@ -262,12 +261,12 @@ apply_theme() {
 
       # Code fetched from Feren OS Themer (https://github.com/feren-OS/feren-Themer-Source-Code)
       # Make Cinnamon panel look like Windows 10 Taskbar
-      # Install Cinnamon applets
 
       # Install applets, global or local
       if [ $locvar == "global" ]; then
+      # Global install in /usr/share/cinnamon/applets
 
-        # See if WindowListGroup is installed
+        # See if WindowListGroup is installed (default should be to NOT remove applet
         if [ -d "$appleturl/WindowListGroup@jake.phy@gmail.com" ]; then
           echo "Removing WindowListGroup applet previously installed" >>"$LOG"
           sudo rm -rf "$appleturl/WindowListGroup@jake.phy@gmail.com"
@@ -287,6 +286,7 @@ apply_theme() {
         sngmv=$(sudo mv slingshot@jfarthing84 "$appleturl")
 
       else
+      # Local install to ~/.local/share/cinnamon/applets
 
         # For user-ease, no remove if locally installed
         if [ ! -d "$appleturl/WindowListGroup@jake.phy@gmail.com" ] || [ ! -d "$appleturl/slingshot@jfarthing84" ]; then
@@ -304,7 +304,7 @@ apply_theme() {
       echo "$wlgmv" >>"$LOG"
       echo "$sngmv" >>"$LOG"
 
-      # Use GSettings to change panel config
+      # Use GSettings to change panel config to look like windows 10
       gsettings set org.cinnamon enabled-applets "['panel1:left:0:slingshot@jfarthing84', 'panel1:left:1:WindowListGroup@jake.phy@gmail.com', 'panel1:right:0:notifications@cinnamon.org', 'panel1:right:1:user@cinnamon.org', 'panel1:right:2:removable-drives@cinnamon.org', 'panel1:right:3:keyboard@cinnamon.org', 'panel1:right:4:bluetooth@cinnamon.org', 'panel1:right:5:network@cinnamon.org', 'panel1:right:6:sound@cinnamon.org', 'panel1:right:7:power@cinnamon.org', 'panel1:right:8:systray@cinnamon.org', 'panel1:right:9:calendar@cinnamon.org', 'panel1:right:10:windows-quick-list@cinnamon.org']"
 
       # Apply wallpaper
@@ -312,28 +312,38 @@ apply_theme() {
       ;;
 
      gnome)
-      # Install user theme extension (disabled, still searching to get correct package manager
+      # Install user theme extension (disabled, open webpage instead)
+      
+      # Display message why extension is needed
+      tput setaf 3
+      echo "The user themes extension must be enabled to apply the windows 10 shell theme"
+      
+      # Wait a bit, make shure user reads message
+      sleep 5
+      
+      # Open webpage
+      x-www-browser https://extensions.gnome.org/extension/19/user-themes
 
       # Code from http://unix.stackexchange.com/questions/46081/identifying-the-system-package-manager
       # Search for correct package manager
-      declare -A osInfo;
-      osInfo[/etc/redhat-release]=yum
-      osInfo[/etc/arch-release]=pacman
-      osInfo[/etc/gentoo-release]=emerge
-      osInfo[/etc/SuSE-release]=zypper
-      osInfo[/etc/fedora-release]=dnf
-      osInfo[/etc/debian_version]=apt-get
+      # declare -A osInfo;
+      # osInfo[/etc/redhat-release]=yum
+      # osInfo[/etc/arch-release]=pacman
+      # osInfo[/etc/gentoo-release]=emerge
+      # osInfo[/etc/SuSE-release]=zypper
+      # osInfo[/etc/fedora-release]=dnf
+      # osInfo[/etc/debian_version]=apt-get
 
       # Default pakage manager is APT
-      pkgman='apt'
+      # pkgman='apt'
 
-      for f in ${!osInfo[@]}
-      do
-        if [[ -f $f ]];then
-          echo "Package manager: ${osInfo[$f]}" >>"$LOG"
-          pkgman="${osInfo[$f]}"
-        fi
-      done
+      # for f in ${!osInfo[@]}
+      # do
+      #  if [[ -f $f ]];then
+      #    echo "Package manager: ${osInfo[$f]}" >>"$LOG"
+      #    pkgman="${osInfo[$f]}"
+      #  fi
+      # done
       
       # Proceed with installation
       tput setaf 2
@@ -353,7 +363,7 @@ apply_theme() {
       ;;
 
      lxde)
-      # Configuration file edition required
+      # Configuration file edition required (install using sed soon)
       tput setaf 3; echo "Lxde supports only manual input to change themes. Please do so by opening the corresponding Tweak tool"; tput setaf 7
       ;;
 
@@ -361,40 +371,43 @@ apply_theme() {
       # Maybe this is REALLY outdated...
       tput setaf 3; echo "The method used to apply icons may not be the latest. If it does not work, please apply the themes yourself"; tput setaf 7
 
+      # Set desktop & WM themes
       mateconftool-2 --type=string --set /desktop/mate/interface/gtk_theme "$theme"
       mateconftool-2 --type=string --set /apps/marco/general/theme "$theme"
       # Search for way to set icon theme from terminal
       ;;
 
      unity)
+      # Set themes, same thing as gnome
       gsettings set org.gnome.desktop.interface gtk-theme "$theme"
       gsettings set org.gnome.desktop.wm.preferences theme "$theme"
       gsettings set org.gnome.desktop.interface icon-theme "$icon_theme"
 
       # Set Unity to be a little more Windowish
       gsettings set com.canonical.Unity.Launcher launcher-position Bottom
-      gsettings set com.canonical.Unity form-factor 'Desktop'
+      gsettings set com.canonical.Unity form-factor 'Desktop' # Set Dash to be more like a start menu
 
       # Apply Wallpaper
       gsettings set org.gnome.desktop.background picture-uri "file://$imgurl/windows-10/wallpaper.jpg"
       ;;
 
      xfce)
+      # Set WM, GTK and icon themes
       xfconf-query -c xsettings -p /Net/ThemeName -s "$theme"
       xfconf-query -c xfwm4 -p /general/theme -s "$theme"
       xfconf-query -c xsettings -p /Net/IconThemeName -s "$icon_theme"
       ;;
 
      *)
+      # Other DEs, generally unsupported for application
       tput setaf 3; echo "Cannot apply changes for your current configuration: $DE"; tput setaf 7
       echo "Unsupported Desktop environment: $DESKTOP_SESSION" >>"$LOG"
-#      return [n]
       ;;
 
   esac
 
 # Apply Windows Aero X11 theme (disabled for now)
-
+  # User must manually choose X11 theme, but it's a big mess anyways...
   echo "X11 cursor theme is installed, but cannot be applied automatically. Please do so in your System settings or tweak tool"
 
 # Create security copy
@@ -427,10 +440,11 @@ apply_theme() {
 
 # ------------------------------ GET FLAGS FUNCTION ------------------------------- #
 
+# Set settings according to flags and parameters with which the script was launched
 get_flags() {
 
-  declare -a flags
-  flags=("$@")
+  declare -a flags # Declare a new array
+  flags=("$@")     # Host all flags in the array
 
 # We used getopts to manage flags, but DE override says no
   for f in ${!flags[@]}
@@ -454,7 +468,7 @@ get_flags() {
       echo "User chose to force override DE: ${flags["$f+1"]}" >"$LOG"
       override="${flags["$f+1"]}"
 
-      declare -A deskenv;
+      declare -A deskenv; # New array hosting supported DEs
       deskenv[gnome]="gnome-shell"
       deskenv[cinnamon]="mutter"
       deskenv[unity]="compiz"
@@ -463,11 +477,12 @@ get_flags() {
       deskenv[mate]="marco"
       deskenv[xfce]="xfce"
 
-      for f in ${!deskenv[@]}
+      for f in ${!deskenv[@]} # for every item in the array
       do
-        if [[ $override == $f ]];then
+        if [[ $override == $f ]];then # assign WM value if DE matches parameter
           echo "WM set to $f"
           new_WM=${deskenv[$f]}
+          # this installer uses the WM as base to chose which DE it must use, because getting the DE is too hard
         fi
       done
       ;;
@@ -517,14 +532,16 @@ get_flags() {
 
 #-------------------------------- AUTHENTIFY INSTALL FUNCTION ---------------------------------#
 
+# Check if all files were installed correctly
 verify() {
-
+  
+  # Variable to see if all is OK, else it returns what's missing
   isok="ok"
 
 # Verify if themes installed OK
   if [ ! -d "$themeurl/Windows 10 Light" ]; then
     isok='GTK theme'
-    return
+    return # first error must go out first
   fi
 
 # Verify if icon theme OK
@@ -545,15 +562,14 @@ verify() {
     return
   fi
 
-  return
-
 }
 
 #------------------------------------- THEME CHOSE FUNCTION ------------------------------------#
 
+# Make user choose if he wants Light, Dark or Metro themes
 theme() {
 
-  if [ $DE == 'gnome' ]; then
+  if [ $DE == 'gnome' ]; then # Metro application only available for GNOME
     read -n 1 -p "Windows 10 Light = 1   Windows 10 Dark = 2   Metro Dark = 3 [1]:" choice
     max=3
   else
@@ -568,7 +584,7 @@ theme() {
   fi
 
   # Assign choices according to user input; default is 1
-  case $choice in
+  case $choice in # a case because we're tired of making if's!
     2)
       theme="Windows 10 Dark"
     ;;
@@ -586,8 +602,8 @@ theme() {
 # ------------------------------ HERE STARTS EXECUTION ------------------------------- #
 
 # Apply flags (if any)
-  if [ ! $# -eq 0 ]; then
-    get_flags $@
+  if [ ! $# -eq 0 ]; then # if all flags count > 0
+    get_flags $@ # send all flags to detect flags function
   fi
 
 # Welcome message
@@ -604,21 +620,23 @@ theme() {
   today=`date +%Y-%m-%d_%k:%M:%S`
   echo "Installation process started: $today" >"$LOG"
 
-# Some compatibility measures
-  bash_v="$(echo "$BASH_VERSION" | cut -c1-1)"
+# Check to see if Bash is compatible with this script
+  bash_v="$(echo "$BASH_VERSION" | cut -c1-1)" # since we need bash 4.x, get first name
   
+  # Check compatibility
   if [ $bash_v -lt 4 ]; then
     tput setaf 1
     echo "GNU Bash 4.0 or higher is needed to execute this script correctly. You have $BASH_VERSION" | tee -a "$LOG"
-    exit #Useless to continue execution
+    exit # Useless to continue execution
   else
     tput setaf 2
     echo "GNU Bash is compatible: $BASH_VERSION" | tee -a "$LOG"
   fi
 
-# Check Internet connection
+# Check Internet connection by checking Github (logical, that's from where files are downloaded)
   echo -e "GET http://github.com HTTP/1.0\n\n" | nc github.com 80 > /dev/null 2>&1
 
+  # If there is any value > 0 in ? variable
   if [ $? -eq 0 ]; then
     tput setaf 2; echo "Internet connection detected" | tee -a "$LOG"; tput setaf 7
   else
@@ -629,9 +647,9 @@ theme() {
 # Get Window manager Name
   WM="$(xprop -id $(xprop -root -notype | awk '$1=="_NET_SUPPORTING_WM_CHECK:"{print $5}') -notype -f _NET_WM_NAME 8t | grep _NET_WM_NAME)"
 
-# Get NET name
+# Get NET name (remove clutter at start of string)
   WM=${WM#'_NET_WM_NAME = "'}
-  WM=${WM%'"'}
+  WM=${WM%'"'} # remove last "
 
 # Lower case WM name
   WM=${WM,,}
@@ -644,7 +662,7 @@ theme() {
   DE="Unknown" #Avoid getting NULL value somewhere
 
 # Shortcut to avoid 'cd ../../..'
-  TMP=$PWD/tmp
+  TMP=$PWD/tmp # set tmp path to actual directory plus tmp
 
 # register work folder
   echo "Work directory is: $TMP" >>"$LOG"
@@ -675,7 +693,8 @@ theme() {
 
   # Make corresponding folders according to install choice
   if [ "$locvar" == "global" ]; then
-
+  
+  # global install
     case $wlp in
       false) sudo mkdir "$imgurl";;
     esac
@@ -688,7 +707,7 @@ theme() {
     sudo cp -f wallpaper.jpg "$imgurl/windows-10"
 
   else
-
+  # local install
     case $wlp in
       false) mkdir "$imgurl";;
     esac
@@ -704,7 +723,7 @@ theme() {
 # return to TMP
   cd "$TMP"
 
-# Function if user wants forced install
+# Override WM name if user wants forced install
   if [ "$override" != 'false' ]; then
     WM=$new_WM
   fi
@@ -800,7 +819,7 @@ theme() {
       ;;
   esac
 
-# debugging purposes
+# Record to log which WM is detected and if any association has occurred
   if [ "$WM" != "Unknown" ]; then
     echo "$WM detected as Window manager, assuming $DE" >>"$LOG"
   else
@@ -811,7 +830,7 @@ theme() {
   echo "You can apply a Dark or a Light variant of this theme. Both will be installed anyways"
   theme
 
-# Call theme install function according to install choice
+# Call theme install function according to install choice (global/local)
   echo "User selected $locvar installation" >>"$LOG"
   if [ $locvar == "global" ]; then
     install_theme
@@ -821,7 +840,8 @@ theme() {
 
 # Check if all files are really where they should
   verify
-
+  
+  # Display what went wrong if error is found
   if [ "$isok" != "ok" ]; then
     echo ""
     echo "$isok theme didn't install correctly. Exiting..." >>"$LOG"
