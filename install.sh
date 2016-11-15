@@ -458,8 +458,9 @@ get_flags() {
       # Help for TransPack
       printf "Available flags\n -h         Show help\n"
       printf " -t         Enable testing mode for development, or installation from local resources\n"
-      printf " -w         Option coming soon...\n"
+      printf " --set-de   Force install theme for specific supported Desktop environment.\n"
       printf " -v         Get TransPack versioning and information\n"
+      printf " -l         Install themes to .themes and icons to .icons to avoid using sudo install\n"
       echo "More info or help @ $Website/TransPack.html"
 
       exit
