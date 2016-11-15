@@ -307,7 +307,8 @@ apply_theme() {
       # Use GSettings to change panel config to look like windows 10
       gsettings set org.cinnamon enabled-applets "['panel1:left:0:slingshot@jfarthing84', 'panel1:left:1:WindowListGroup@jake.phy@gmail.com', 'panel1:right:0:notifications@cinnamon.org', 'panel1:right:1:user@cinnamon.org', 'panel1:right:2:removable-drives@cinnamon.org', 'panel1:right:3:keyboard@cinnamon.org', 'panel1:right:4:bluetooth@cinnamon.org', 'panel1:right:5:network@cinnamon.org', 'panel1:right:6:sound@cinnamon.org', 'panel1:right:7:power@cinnamon.org', 'panel1:right:8:systray@cinnamon.org', 'panel1:right:9:calendar@cinnamon.org', 'panel1:right:10:windows-quick-list@cinnamon.org']"
 
-      # Apply wallpaper
+      # Apply wallpaper & fill screen
+      gsettings set org.cinnamon.desktop.background picture-options "scaled"
       gsettings set org.cinnamon.desktop.background picture-uri  "file://$imgurl/windows-10/wallpaper.jpg"
       ;;
 
@@ -359,6 +360,7 @@ apply_theme() {
       gsettings set org.gnome.desktop.interface icon-theme "$icon_theme"
 
       # Apply Wallpaper
+      gsettings set org.gnome.desktop.background picture-options "scaled"
       gsettings set org.gnome.desktop.background picture-uri "file://$imgurl/windows-10/wallpaper.jpg"
       ;;
 
@@ -388,6 +390,7 @@ apply_theme() {
       gsettings set com.canonical.Unity form-factor 'Desktop' # Set Dash to be more like a start menu
 
       # Apply Wallpaper
+      gsettings set org.gnome.desktop.background picture-options "scaled"
       gsettings set org.gnome.desktop.background picture-uri "file://$imgurl/windows-10/wallpaper.jpg"
       ;;
 
