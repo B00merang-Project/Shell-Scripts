@@ -573,7 +573,7 @@ verify() {
 # Make user choose if he wants Light, Dark or Metro themes
 theme() {
 
-  if [ $DE == 'gnome' ]; then # Metro application only available for GNOME
+  if [ "$DE" == 'gnome' ]; then # Metro application only available for GNOME
     read -n 1 -p "Windows 10 Light = 1   Windows 10 Dark = 2   Metro Dark = 3 [1]:" choice
     max=3
   else
@@ -628,7 +628,7 @@ theme() {
   bash_v="$(echo "$BASH_VERSION" | cut -c1-1)" # since we need bash 4.x, get first name
   
   # Check compatibility
-  if [ $bash_v -lt 4 ]; then
+  if [ "$bash_v" -lt 4 ]; then
     tput setaf 1
     echo "GNU Bash 4.0 or higher is needed to execute this script correctly. You have $BASH_VERSION" | tee -a "$LOG"
     exit # Useless to continue execution
