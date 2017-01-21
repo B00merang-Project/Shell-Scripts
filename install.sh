@@ -450,7 +450,7 @@ get_flags() {
   flags=("$@")     # Host all flags in the array
 
 # We used getopts to manage flags, but DE override says no
-  for f in ${!flags[@]}
+  for f in "${!flags[@]}"
   do
     case ${flags[$f]} in
 
@@ -481,7 +481,7 @@ get_flags() {
       deskenv[mate]="marco"
       deskenv[xfce]="xfce"
 
-      for f in ${!deskenv[@]} # for every item in the array
+      for f in "${!deskenv[@]}" # for every item in the array
       do
         if [[ $override == $f ]];then # assign WM value if DE matches parameter
           echo "WM set to $f"
@@ -607,7 +607,7 @@ theme() {
 
 # Apply flags (if any)
   if [ ! $# -eq 0 ]; then # if all flags count > 0
-    get_flags $@ # send all flags to detect flags function
+    get_flags "$@" # send all flags to detect flags function
   fi
 
 # Welcome message
