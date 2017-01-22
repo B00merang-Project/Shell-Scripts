@@ -483,7 +483,7 @@ get_flags() {
 
       for f in "${!deskenv[@]}" # for every item in the array
       do
-        if [[ $override == $f ]];then # assign WM value if DE matches parameter
+        if [[ $override == "$f" ]];then # assign WM value if DE matches parameter
           echo "WM set to $f"
           new_WM=${deskenv[$f]}
           # this installer uses the WM as base to chose which DE it must use, because getting the DE is too hard
