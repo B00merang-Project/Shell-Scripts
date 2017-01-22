@@ -105,9 +105,10 @@ get_tmp() {
   zipx11=$(unzip windows_x11.zip | sed -n '1p')
 
   # Store variable to track eventual errors
-  echo "$zipgtk" >>"$LOG"
-  echo "$zipicon" >>"$LOG"
-  echo "$zipx11" >>"$LOG"
+  { echo "$zipgtk"
+    echo "$zipicon"
+    echo "$zipx11"
+  } >> "$LOG"
 
   # Rename master themes Folder
   mv Windows-10-master GTK
