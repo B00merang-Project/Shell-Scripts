@@ -622,7 +622,7 @@ theme() {
   touch "$LOG"
 
 # Some basic information to log
-  today=`date +%Y-%m-%d_%k:%M:%S`
+  today=$(date +%Y-%m-%d_%k:%M:%S)
   echo "Installation process started: $today" >"$LOG"
 
 # Check to see if Bash is compatible with this script
