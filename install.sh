@@ -101,7 +101,7 @@ get_tmp() {
 
   # Unzip files & store first output line to variable
   zipgtk=$(unzip master.zip | sed -n '1p')
-  zipicon=$(unzip icons.zip | sed -n '1p')
+  zipicon=$(unzip master.zip.1 | sed -n '1p')
   zipx11=$(unzip windows_x11.zip | sed -n '1p')
 
   # Store variable to track eventual errors
@@ -136,7 +136,7 @@ get_zip() {
   wget https://github.com/B00merang-Project/Windows-10/archive/master.zip -q --show-progress
 
   # Get icon theme
-  wget https://github.com/B00merang-Project/Windows-10/archive/icons.zip -q --show-progress
+  wget https://github.com/B00merang-Project/Windows-10-Icons/archive/master.zip -q --show-progress
 
   # Get X11 theme from website (no other hosting)
   wget http://b00merang.weebly.com/uploads/1/6/8/1/16813022/windows_x11.zip -q --show-progress
