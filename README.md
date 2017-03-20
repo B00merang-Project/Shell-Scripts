@@ -1,4 +1,7 @@
 # TransPack
+
+![transpack-logo](https://github.com/B00merang-Project/Shell-Scripts/blob/master/transpack.png)
+
 B00merang TransPack Script, for easy theme installation and application
 
 **Maintainer:** [Elbullazul](https://github.com/Elbullazul)
@@ -8,8 +11,6 @@ B00merang TransPack Script, for easy theme installation and application
 **License:** GPL v3
 
 Latest Version: 2.0.1-release
-
-![transpack-logo](https://github.com/B00merang-Project/Shell-Scripts/blob/master/transpack.png)
 
 ## This script now accepts the following flags:
 - -h : get help and available flags for the script
