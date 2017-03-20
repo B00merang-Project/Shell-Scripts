@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Software variables
-version="R5"
+version="R7.1"
 
 LOG="$PWD/install.log"
 path="/usr/share/themes"
@@ -15,18 +15,48 @@ icon_theme="Windows 10 Icons"
 WM="Unknown"
 DE="Unknown"
 
+check_net=true
+testing=false
+
 Website="http://b00merang.weebly.com"
 
 # --- Misc functions to simplify programming ---
 download() {
 
  wget $1 -q --show-progress
- mv master.zip $2
+
+ file="$(basename $1)"
+ mv "$file" $2
 
 }
 
 color() {
- tput setaf $1
+
+ # keep colors here in array to facilitate stuff
+ declare -a colors
+ colors=( black red green yellow blue magenta cyan white gray )
+ found=false
+
+ for f in "${!colors[@]}"
+ do
+  if [ "$1" == "${colors[$f]}" ]; then
+   tput setaf $f
+   found=true
+  fi
+ done
+
+ if [ "$found" = true ]; then
+  log 'Wrong color number'
+ fi
+
+}
+
+output() {
+ echo "$1: $2" | tee -a "$LOG"
+}
+
+log() {
+ echo "$1" >> "$LOG"
 }
 
 # --- Verification and integrity functions ---
@@ -36,27 +66,54 @@ check_bash() {
  bash_v="$(echo "$BASH_VERSION" | cut -c1-1)" # since we need bash 4.x, get first name
 
  if [ "$bash_v" -lt 4 ]; then
-  color 1
-  echo "GNU Bash 4.0 or higher is needed to execute this script correctly. You have $BASH_VERSION" | tee -a "$LOG"
+  color red
+  output "GNU Bash 4.0 or higher is needed to execute this script correctly. You have $BASH_VERSION"
   exit # Useless to continue execution
  else
-  color 2
-  echo "GNU Bash is compatible: $BASH_VERSION" | tee -a "$LOG"
+  color green
+  output "GNU Bash is compatible: $BASH_VERSION"
  fi
 
 }
 
 check_connection() {
 
- echo -e "GET http://github.com HTTP/1.0\n\n" | nc github.com 80 > /dev/null 2>&1
+ if [ "$check_net" = true ]; then
 
- # If there is any value > 0 in ? variable
- if [ $? -eq 0 ]; then
-  color 2; echo "Internet connection detected" | tee -a "$LOG"; color 7
+   echo -e "GET http://github.com HTTP/1.0\n\n" | nc github.com 80 > /dev/null 2>&1
+
+   # If there is any value > 0 in ? variable
+   if [ $? -eq 0 ]; then
+    color green
+    output "Internet connection detected"
+    color white
+   else
+    color red
+    output "Internet connection needed. Please connect and retry"
+    exit
+   fi
  else
-  color 1; echo "Internet connection needed. Please connect and retry" | tee -a "$LOG"
-  exit
+  log 'Check_connection was disabled for this run'
  fi
+
+}
+
+check_dependencies() {
+
+  # xprop
+  if [ -a /usr/bin/xprop ]; then
+   log "xprop is installed. Proceding..."
+  else
+   color red
+   output "Xprop is needed to detect your DE. Please install it or use manual DE override to install this theme (-h to see help)"
+  fi
+
+  # netcat (nc)
+  if [ -a /bin/nc ]; then
+   log "netcat is installed. Proceding..."
+  else
+   output "Netcat is needed to test your internet connection. Please install it or use no-check mode (-h to see help)"
+  fi
 
 }
 
@@ -88,10 +145,10 @@ verify() {
   fi
 
   if [ "$isok" != "ok" ]; then
-   echo "Something went wrong while installing: $isok. Aborting..." | tee -a "$LOG"
+   output "Something went wrong while installing: $isok. Aborting..."
    exit
   else
-   echo "All files installed correctly" >> "$LOG"
+   log "All files installed correctly"
   fi
 
 }
@@ -136,7 +193,7 @@ uninstall() {
   ;;
  esac
 
- echo "Themes uninstalled successfully" | tee -a "$LOG"
+ output "Themes uninstalled successfully"
  
  exit
 
@@ -154,14 +211,24 @@ process_flags() {
 
     -h)
       # Help for TransPack
-      printf "Available flags\n -h         Show help\n"
+      printf "\nAvailable flags\n"
+      printf " -h         Show help\n"
       printf " -t         Enable testing mode for development\n"
       printf " -v         Get TransPack versioning and information\n"
       printf " -l         Install themes to local folders\n"
+      printf " -n         Doesn't check for internet connection\n"
       printf " --set-de   Force install theme for specific Desktop environment\n"
-      color 4
-      printf "\n---supported DEs---\n"; color 7; printf " gnome unity cinnamon lxde fluxbox\n openbox mate"; color 3; printf " (experimental)\n\n"
-      color 7
+
+      color blue
+      printf "\n***supported DEs***\n"
+
+      color white
+      printf " - gnome\n - unity\n - cinnamon\n - lxde\n - fluxbox\n - openbox\n - mate"
+
+      color yellow
+      printf " (experimental)\n\n"
+
+      color white
       echo "More info or help @ $Website/TransPack.html"
 
       exit
@@ -169,7 +236,7 @@ process_flags() {
 
     --set-de)
       # Force install some DE
-      echo "User chose to force override DE: ${flags["$f+1"]}" >"$LOG"
+      log "User chose to force override DE: ${flags["$f+1"]}"
 
       declare -A deskenv; # New array hosting supported DEs
       deskenv[gnome]="gnome-shell"
@@ -192,11 +259,14 @@ process_flags() {
 
     -v)
       # Versioning info
-      color 4;
-      echo "B00merang TransPack $version"
-      echo "----------------------------"
-      color 6;
-      echo "Transformation Pack script for Linux desktop. Compatibility list found @ $Website/TransPack.html"
+      color blue
+      echo -e "B00merang TransPack $version\n"
+      color cyan
+      echo -e "Transformation Pack script for Linux desktops \nCompatibility list found @ $Website/TransPack.html"
+
+
+      color white
+      echo -e "\n***Credits***\nChristian Medel (Elbullazul)\nBrandon Camilleri (brandleesee)\nXavier Brusselaers (GroumphyOriginal)\nManuel Transfeld (auipga)"
       exit
       ;;
 
@@ -216,13 +286,16 @@ process_flags() {
     -u)
       uninstall
       ;;
+    -n|--no-check)
+      check_net=false
+      ;;
 
     # Avoid breaking execution for supported DEs for force install
     gnome|cinnamon|lxde|mate|unity|fluxbox|xfce)
       ;;
 
     *)
-      echo "Unvalid option/argument. Aborting..." | tee -a "$LOG"
+      output "Unvalid option/argument. Aborting..."
       exit
       ;;
 
@@ -249,22 +322,27 @@ prompt_theme() {
  read -p "Do you want to apply a theme after installation? (y/n): " yesno
 
  case $yesno in
-  y|Y) echo "User selected auto-application" >> "$LOG";;
-  n|N) echo "No theme will be applied" | tee -a "$LOG"; return;;
+  y|Y) log "User selected auto-application"
+   echo "Themes available:"
+   color white
+   echo " (1) Windows 10 Light"
+
+   color gray
+   echo " (2) Windows 10 Dark"
+
+   color black
+   echo " (3) Windows 10 Metro"
+   color white
+
+   # Loop while theme is not what we listed
+   get_input
+   apply
+  ;;
+
+  n|N)
+   output "No theme will be applied"
+  ;;
  esac
-
- echo "Themes available:"
- color 7
- echo " (1) Windows 10 Light"
- color 8
- echo " (2) Windows 10 Dark"
- color 0
- echo " (3) Windows 10 Metro"
- color 7
-
- # Loop while theme is not what we listed
- get_input
- apply
 
 }
 
@@ -305,7 +383,10 @@ install_tint2() {
 }
 
 get_files() {
- echo "Download files">> "$LOG"
+
+ if [ "$testing" = false ]; then
+
+  output 'Downloading files...'
 
   # Get GTK Light theme
   download https://github.com/B00merang-Project/Windows-10/archive/master.zip light.zip
@@ -322,7 +403,9 @@ get_files() {
   # Get X11 theme from website (no other hosting)
   download http://b00merang.weebly.com/uploads/1/6/8/1/16813022/windows_x11.zip win8.zip
 
- echo "Done"
+  echo "Done"
+
+ fi
 
 }
 
@@ -358,7 +441,11 @@ fi
   WM=${WM,,}
 
 # Notify Window manager
-  color 3; printf "Identified Window manager. Waiting for association...\n" | tee -a "$LOG"; color 7
+  color yellow
+  output "Identified Window manager. Waiting for association..."
+  color white
+
+  echo "" # new line
 
 # Desktop Environment variable
   DE="Unknown" #Avoid getting NULL value somewhere
@@ -411,23 +498,25 @@ associate() {
 
     *)
       # Install GTK theme only, if no DE recognized
-      color 1; echo "We have been unable to associate your Desktop Environment. Executing Legacy Installation"; color 7
-      echo "Unknown Desktop Environment. Proceeding with Legacy installation..." >>"$LOG"
+      color red
+      echo "We have been unable to associate your Desktop Environment. Executing Legacy Installation"
+      color white
+      log "Unknown Desktop Environment. Proceeding with Legacy installation..."
       ;;
   esac
 
  # Record to log which WM is detected and if any association has occurred
   if [ "$WM" != "Unknown" ]; then
-    echo "$WM detected as Window manager, assuming $DE" >>"$LOG"
+    log "$WM detected as Window manager, assuming $DE"
   else
-    echo "$WM has no known DE associated with it" >>"$LOG"
+    log "$WM has no known DE associated with it"
   fi
 
 }
 
 inflate() {
 
- echo "Extracting files">> "$LOG"
+ log "Extracting files"
 
   # Unzip files & store first output line to variable
   zipgtk=$(unzip light.zip | sed -n '1p')
@@ -436,7 +525,7 @@ inflate() {
   zipicon=$(unzip icons.zip | sed -n '1p')
   zipx11=$(unzip win8.zip | sed -n '1p')
 
- echo "Renaming files">> "$LOG"
+ log "Renaming files"
 
  mv Windows-10-master Windows\ 10\ Light
  mv Windows-10-Dark* Windows\ 10\ Dark
@@ -474,14 +563,15 @@ install_themes() {
   ;;
  esac
 
- echo "Installing themes in $path and icons in $iconpath" >> "$LOG"
+ log "Installing themes in $path and icons in $iconpath"
  
 }
 
 apply() {
 
 # Here is where DE variable gets important
-  color 3; echo "Applying $theme_name to: $DE" | tee -a "$LOG"
+  color yellow
+  output "Applying $theme_name to: $DE"
 
 # Apply themes depending on Desktop environments
   case $DE in
@@ -495,7 +585,7 @@ apply() {
 
      gnome)
       # Display message why extension is needed
-      color 3
+      color yellow
       echo "The user themes extension must be enabled to apply the windows 10 shell theme"
       
       # Wait a bit, make shure user reads message
@@ -515,14 +605,14 @@ apply() {
       # Configuration file edition required (install using sed soon)
       tput setaf 3
       echo "Lxde supports only manual input to change themes. Please do so by opening the corresponding Tweak tool"
-      color 7
+      color white
       ;;
 
      mate)
       # Maybe this is REALLY outdated...
-      color 3
+      color yellow
       echo "The method used to apply icons may not be the latest. If it does not work, please apply the themes yourself"
-      color 7
+      color white
 
       # Set desktop & WM themes
       mateconftool-2 --type=string --set /desktop/mate/interface/gtk_theme "$theme_name"
@@ -551,48 +641,50 @@ apply() {
      *)
       # Other DEs, generally unsupported for application
       echo "Cannot apply changes for your current configuration: $DE"
-      echo "Unsupported Desktop environment: $DESKTOP_SESSION" >>"$LOG"
+      log "Unsupported Desktop environment: $DESKTOP_SESSION"
       ;;
   esac
 
-  color 6
+  color cyan
 
   # User must manually choose X11 theme, but it's a big mess anyways...
   echo "X11 cursor theme is installed, but cannot be applied automatically. Please do so in your System settings or tweak tool"
 
-  color 7
+  color white
 
 }
 
 welcome() {
 
 # Welcome message
- color 4; echo "Welcome to the B00merang Theme Installer";
- printf "\n"; color 7
+ color blue
+ printf "Welcome to the B00merang Theme Installer\n"
+ color white
+
+# Create log file
+ if [ -a 'install.log' ]; then
+  rm -rf "install.log"
+ fi
+
+ touch "$LOG"
 
 # Wait for user input
  read -n 1 -s -p "Press any key to continue"
  printf "\n"
 
-# Create log file
- if [ -a "$LOG" ]; then
-  rm -rf "$LOG"
- fi
-
- touch "$LOG"
-
 # Some basic information to log
  today=$(date +%Y-%m-%d_%k:%M:%S)
- echo "Installation process started: $today" >"$LOG"
+ log "Installation process started: $today"
 
 }
 
 dev_mode() {
 
- color 1
- echo "Developer mode active" | tee -a "$LOG"
- color 7
+ color red
+ output "Developer mode active"
+ color white
 
+ # remove previous installation files (if any)
  if [ -d TMP ]; then
   rm -rf TMP
  fi
@@ -605,13 +697,16 @@ dev_mode() {
  iconpath="$HOME/myicondir"
  stylepath="$HOME/mystyles"
 
+ testing=true
+
 }
 
 main() {
 
- color 7
+ color white
  process_flags $@
 
+ check_dependencies
  check_bash
  check_connection
 
@@ -623,7 +718,7 @@ main() {
 
  cd TMP
 
-# get_files
+ get_files
  inflate
 
  detect_wm
@@ -637,7 +732,7 @@ main() {
  cd ..
  rm -rf TMP
 
- echo "Installation completed successfully" >> "$LOG"
+ log "Installation completed successfully"
 
  printf "\nFor support visit $Website\n"
  sleep 5
