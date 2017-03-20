@@ -33,4 +33,8 @@ chmod +x transpack.sh
 ./transpack.sh -u
 ```
 
+## Extra scripts
+- To unity: simple script to make uniti theme from compatible metacity theme
+- gtk-compile: make gtk gresource with your themes to improve speed and stability (gtk 3.10 and up only)
+
 **Webpage :** http://b00merang.weebly.com/transpack.html

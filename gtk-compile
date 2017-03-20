@@ -1,0 +1,80 @@
+#!/bin/bash
+
+echo 'To use this script you must have the follwowing packages installed:
+libgtk-3-dev
+libglib2.0-dev
+libgdk-pixbuf2.0-dev
+libxml2-utils
+
+run sudo apt install -y libgtk-3-dev libglib2.0-dev libgdk-pixbuf2.0-dev libxml2-utils to install them now'
+
+read -p "Enter path to theme gtk-3.0 folder: " "path"
+
+cd "$path"
+
+read -p "Enter theme name: " "theme"
+
+mkdir "$PWD.bak"
+cp * -r "$PWD.bak"   # backup copy
+
+cp gtk.css gtk-main.css
+
+if [ -a gtk-dark.css ]; then
+ cp gtk-dark.css gtk-dark-main.css
+fi
+
+file="$PWD/gtk.gresource.xml"
+header='<?xml version="1.0" encoding="UTF-8"?>\n<gresources>\n<gresource prefix="/org/gnome/'
+post='">'
+
+echo -e "$header$theme$post" >> "$file"
+
+# for D in *; do find "$D" -type d; done #list all firs, type f for files
+
+sub_append() {
+
+for F in *; do
+ if [[ $F == *.css ]]; then
+  echo "<file>$1/$F</file>" >> "$file"
+ elif [[ $F == *.png ]]; then
+  echo "<file preprocess='to-pixdata'>$1/$F</file>" >> "$file"
+ fi
+done
+
+}
+append() {
+for F in *; do
+ if [[ $F == *.css ]]; then
+  echo "<file>$F</file>" >> "$file"
+ elif [[ $F == *.png ]]; then
+  echo "<file preprocess='to-pixdata'>$F</file>" >> "$file"
+ fi
+done
+}
+
+for D in *; do
+ if [ -d "${D}" ]; then
+  cd "${D}"
+  echo "${D}"
+  sub_append "${D}"
+  cd ..
+ fi
+done
+
+# current directory
+append
+
+echo -e "</gresource>\n</gresources>" >> "$file"
+
+glib-compile-resources gtk.gresource.xml
+
+printf '@import url("resource:///org/gnome/' >> gtk.css
+printf "$theme" >> gtk.css
+printf '/gtk-main.css");' >> gtk.css
+
+if [ -a gtk-dark.css ]; then
+ printf '@import url("resource:///org/gnome/' >> gtk-dark.css
+ printf "$theme" >> gtk-dark.css
+ printf '/gtk-dark-main.css");' >> gtk-dark.css
+fi
+
