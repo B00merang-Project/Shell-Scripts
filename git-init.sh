@@ -17,9 +17,17 @@ themes=(
 'Redmond Themes'
 'Solaris 10'
 'Solaris 11'
+'Unity 7'
 'Unity 8'
+'watchOS'
 'Wear OS'
+'Windows 3.11'
+'Windows 95'
+'Windows Vista'
+'Windows 7'
+'Windows 8.1'
 'Windows 8.1 Metro'
+'Windows Phone 8.1'
 'Windows 10'
 'Windows 10 Dark'
 'Windows 10 Mobile'
@@ -45,9 +53,17 @@ repos=(
 'https://github.com/B00merang-Project/Redmond-Themes'
 'https://github.com/B00merang-Project/Solaris-10'
 'https://github.com/B00merang-Project/Solaris-11'
+'https://github.com/B00merang-Project/Unity7'
 'https://github.com/B00merang-Project/Unity8'
+'https://github.com/B00merang-Project/watchOS'
 'https://github.com/B00merang-Project/Wear-OS'
+'https://github.com/Elbullazul/Windows-3.11'
+'https://github.com/Elbullazul/Windows-95'
+'https://github.com/Elbullazul/Windows-Vista'
+'https://github.com/Elbullazul/Windows-7'
+'https://github.com/Elbullazul/Windows-8.1'
 'https://github.com/B00merang-Project/Windows-8.1-Metro'
+'https://github.com/B00merang-Project/Windows-Phone-8.1'
 'https://github.com/B00merang-Project/Windows-10'
 'https://github.com/B00merang-Project/Windows-10-Dark'
 'https://github.com/B00merang-Project/Windows-10-Mobile'
@@ -60,6 +76,8 @@ tLen=${#themes[@]}
 
 for (( i=0; i<${tLen}; i++ ));
 do
+  echo "Processing ${themes[$i]}"
+
   mkdir "${themes[$i]}"
   cd "${themes[$i]}"
   
