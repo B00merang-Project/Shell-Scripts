@@ -20,6 +20,7 @@ themes=(
 'Unity 7'
 'Unity 8'
 'watchOS'
+'tvOS'
 'Wear OS'
 'Windows 3.11'
 'Windows 95'
@@ -56,6 +57,7 @@ repos=(
 'https://github.com/B00merang-Project/Unity7'
 'https://github.com/B00merang-Project/Unity8'
 'https://github.com/B00merang-Project/watchOS'
+'https://github.com/Elbullazul/tvOS'
 'https://github.com/B00merang-Project/Wear-OS'
 'https://github.com/Elbullazul/Windows-3.11'
 'https://github.com/Elbullazul/Windows-95'
@@ -76,6 +78,7 @@ tLen=${#themes[@]}
 
 for (( i=0; i<${tLen}; i++ ));
 do
+  echo "-----------------------------------------"
   echo "Processing ${themes[$i]}"
 
   mkdir "${themes[$i]}"
