@@ -2,6 +2,7 @@
 
 themes=(
 'Android'
+'BeOS R5'
 'Chrome OS'
 'Fuchsia'
 'iOS'
@@ -39,6 +40,7 @@ themes=(
 
 repos=(
 'https://github.com/B00merang-Project/Android'
+'https://github.com/B00merang-Project/BeOS-R5'
 'https://github.com/B00merang-Project/Chrome-OS'
 'https://github.com/B00merang-Project/Fuchsia'
 'https://github.com/B00merang-Project/iOS'
