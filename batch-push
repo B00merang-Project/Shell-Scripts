@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for D in *; do
+    if [ -d "${D}" ]; then
+        echo "Commiting to '${D}' repository"
+        
+        cd "${D}"
+        batch-git "$1"
+        
+        cd ..
+        
+        echo "--------------------"
+    fi
+done

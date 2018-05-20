@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for D in *; do
+    if [ -d "${D}" ]; then
+        echo "Getting current status of'${D}' repository"
+        
+        cd "${D}"
+        git status
+        
+        cd ..
+        
+        echo "--------------------"
+    fi
+done

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for D in *; do
+    if [ -d "${D}" ]; then
+        echo "Fetching from '${D}' repository"
+        
+        cd "${D}"
+        git pull
+        
+        cd ..
+        
+        echo "--------------------"
+    fi
+done
