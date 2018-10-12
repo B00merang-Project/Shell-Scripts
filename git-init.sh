@@ -2,14 +2,15 @@
 
 themes=(
 'Android'
+'Azurra'
 'BeOS R5'
 'Chrome OS'
 'Fuchsia'
 'iOS'
 'iOS 4'
 'Longhorn Themes'
-'macOS High Sierra'
-'macOS High Sierra Dark'
+'macOS'
+'macOS Dark'
 'Mac OS X Cheetah'
 'OS X Leopard'
 'OS X Mavericks'
@@ -40,6 +41,7 @@ themes=(
 
 repos=(
 'https://github.com/B00merang-Project/Android'
+'https://github.com/Elbullazul/Azurra'
 'https://github.com/B00merang-Project/BeOS-R5'
 'https://github.com/B00merang-Project/Chrome-OS'
 'https://github.com/B00merang-Project/Fuchsia'
@@ -86,9 +88,7 @@ do
   mkdir "${themes[$i]}"
   cd "${themes[$i]}"
   
-  git init
-  git remote add origin ${repos[$i]}
-  git pull origin master
+  git clone ${repos[$i]}
   
   cd ..
 done
