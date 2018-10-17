@@ -85,10 +85,6 @@ do
   echo "-----------------------------------------"
   echo "Processing ${themes[$i]}"
 
-  mkdir "${themes[$i]}"
-  cd "${themes[$i]}"
-  
   git clone ${repos[$i]}
   
-  cd ..
 done
