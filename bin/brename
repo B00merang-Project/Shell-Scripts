@@ -1,0 +1,12 @@
+#!/bin/bash
+
+in="$1"
+out="$2"
+
+read -p "Files will be altered. Continue? (y/n)" -n 1 -r
+echo ""	# new line
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+ rename  "s/$in/$out/" *
+fi

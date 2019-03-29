@@ -1,0 +1,23 @@
+#!/bin/bash
+
+for D in *; do
+    if [ ! -f "${D}/.bsi" ]; then
+      if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
+        tput setaf 4
+      	echo "Commiting to '${D}' repository"
+      	tput op
+
+        cd "${D}"
+        
+        git config credential.helper store
+
+        git add --all
+      	git commit -m "$1"
+      	git push
+
+        cd ..
+
+        echo "--------------------"
+      fi
+    fi
+done

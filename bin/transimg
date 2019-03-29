@@ -1,0 +1,86 @@
+#!/bin/bash
+
+TMP=processed
+
+# Resize args
+WIDTH='32'
+HEIGHT='32'
+
+# Rotation args
+ANGLE='0'
+
+# Rename args
+COM='@2'
+
+# Op vars
+OP=''
+
+# Process arguments
+declare -a flags # Declare a new array
+args=("$@")      # Host all flags in the array
+
+# Number of args
+MAX=${#args[@]}
+
+while getopts o:r:w:h:g:a:e: option
+do
+  case "${option}" in
+    o)
+      OP=${OPTARG}
+    ;;
+    w)
+      WIDTH=${OPTARG}
+    ;;
+    h)
+      HEIGHT=${OPTARG}
+    ;;
+    a)
+      ANGLE=${OPTARG}
+    ;;
+    e)
+      COM=${OPTARG}
+    ;;
+  esac
+done
+
+MV="$TMP"
+
+while [ -d $TMP ]
+do
+  MV="$MV.old"
+  
+  if [ ! -d $MV ]; then
+    mv "$TMP" "$MV"
+  fi
+done
+
+mkdir $TMP
+
+declare -a formats
+formats=( png svg )
+
+for IMAGE in *.*
+do
+
+  EXT="${IMAGE##*.}"
+  NAME=${IMAGE%".$EXT"}
+
+  if [[ " ${formats[*]} " == *" $EXT "* ]]; then
+    # Convert grayscale
+    if [ $OP == 'grayscale' ]; then
+      convert "$IMAGE" -colorspace gray "$TMP/$NAME"
+    fi
+    
+    # Resize
+    if [ $OP == 'resize' ]; then
+      convert "$IMAGE" -resize "$WIDTH"x"$HEIGHT" "$TMP/$NAME$COM.$EXT"
+    fi
+    
+    # Rotate
+    if [ $OP == 'rotate' ] ; then
+      convert "$IMAGE" -rotate "$ANGLE" "$TMP/$NAME$COM.$EXT"
+    fi
+  fi
+done
+
+echo "Done."

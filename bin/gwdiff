@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DIR="$1"
+
+cd "$DIR"
+
+if [ -d "gtk-3.20" ]; then
+ git diff gtk-3.20/gtk-widgets.css
+else
+ git diff gtk-3.0/gtk-widgets.css
+fi

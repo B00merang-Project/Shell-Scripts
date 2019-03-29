@@ -1,0 +1,25 @@
+#!/bin/bash
+
+for D in *; do
+    if [ ! -f "${D}/.bsi" ]; then
+      if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
+        tput setaf 4
+        echo -n "Checking status of '${D}' repository: "
+
+        cd "${D}"
+        OUT=$(git status)
+
+	if [[ "$OUT" = *"nothing to commit"* ]]; then
+	  tput setaf 2
+	  echo "Up to date"
+	else
+	  tput setaf 1
+	  echo "Needs updating"
+	fi
+
+	tput op
+
+        cd ..
+      fi
+    fi
+done

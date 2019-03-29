@@ -1,0 +1,14 @@
+#!/bin/bash
+
+read -p "Files will be altered. Continue? (y/n)" -n 1 -r
+echo ""	# new line
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  rename  's/unfocused/backdrop/' *
+  rename  's/backdrop-normal/backdrop/' *
+  rename  's/focused-//' *
+
+  rename  's/active/hover/' *
+  rename  's/pressed/active/' *
+fi

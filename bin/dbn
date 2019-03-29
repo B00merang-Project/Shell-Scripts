@@ -1,0 +1,4 @@
+#!/bin/bash
+
+killall nautilus
+GTK_DEBUG=interactive nautilus
