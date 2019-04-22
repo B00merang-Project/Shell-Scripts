@@ -1,48 +1,15 @@
 #!/bin/bash
-
-themes=(
-'Android'
-'Azurra'
-'BeOS R5'
-'Chrome OS'
-'Fuchsia'
-'iOS'
-'iOS 4'
-'Longhorn Themes'
-'macOS'
-'macOS Dark'
-'Mac OS X Cheetah'
-'OS X Leopard'
-'OS X Mavericks'
-'OS X Yosemite'
-'Solaris 10'
-'Solaris 11'
-'Solaris 11 Dark'
-'Solaris 11 Light'
-'Unity 7'
-'Unity 8'
-'watchOS'
-'tvOS'
-'Wear OS'
-'Windows 3.11'
-'Windows 95'
-'Windows Vista'
-'Windows 7'
-'Windows 8.1'
-'Windows 8.1 Metro'
-'Windows Phone 8.1'
-'Windows Phone 8.1 Dark'
-'Windows 10'
-'Windows 10 Dark'
-'Windows 10 Mobile'
-'Windows 10 Mobile Dark'
-'Windows Whistler'
-'Windows XP Themes'
-)
-
 repos=(
 'https://github.com/B00merang-Project/Android'
+'https://github.com/B00merang-Project/Android-TV'
+'https://github.com/B00merang-Project/Android-4.4-Kitkat'
+'https://github.com/B00merang-Project/Android-4.4-Kitkat-Dark'
 'https://github.com/Elbullazul/Azurra'
+'https://github.com/B00merang-Project/B00merang-Glass'
+'https://github.com/B00merang-Project/B00merang-Green'
+'https://github.com/B00merang-Project/B00merang-Dark'
+'https://github.com/B00merang-Project/B00merang-Circle'
+'https://github.com/B00merang-Project/B00merang-Flat'
 'https://github.com/B00merang-Project/BeOS-R5'
 'https://github.com/B00merang-Project/Chrome-OS'
 'https://github.com/B00merang-Project/Fuchsia'
@@ -51,11 +18,13 @@ repos=(
 'https://github.com/B00merang-Project/Windows-Longhorn'
 'https://github.com/B00merang-Project/macOS'
 'https://github.com/B00merang-Project/macOS-Dark'
+'https://github.com/B00merang-Project/Mac-OS-9-Classic'
 'https://github.com/B00merang-Project/Mac-OS-X-Cheetah'
 'https://github.com/B00merang-Project/OS-X-Leopard'
 'https://github.com/B00merang-Project/OS-X-Mavericks'
 'https://github.com/B00merang-Project/OS-X-Yosemite'
 'https://github.com/B00merang-Project/Solaris-10'
+'https://github.com/B00merang-Project/Solaris-10-CDE'
 'https://github.com/B00merang-Project/Solaris-11'
 'https://github.com/B00merang-Project/Solaris-11-Dark'
 'https://github.com/B00merang-Project/Solaris-11-Light'
@@ -84,9 +53,5 @@ tLen=${#themes[@]}
 
 for (( i=0; i<${tLen}; i++ ));
 do
-  echo "-----------------------------------------"
-  echo "Processing ${themes[$i]}"
-
   git clone ${repos[$i]}
-  
 done
