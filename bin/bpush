@@ -3,21 +3,28 @@
 for D in *; do
     if [ ! -f "${D}/.bsi" ]; then
       if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
-        tput setaf 4
-      	echo "Commiting to '${D}' repository"
-      	tput op
 
         cd "${D}"
-        
-        git config credential.helper store
+        OUT=$(git status)
 
-        git add --all
-      	git commit -m "$1"
-      	git push
+	if [[ "$OUT" != *"nothing to commit"* ]]; then
+          git config credential.helper store
+
+          git add --all
+          git commit -m "$1"
+          git push
+
+	  tput setaf 4
+
+	  echo ""
+          echo "Pushing from local '${D}' to origin"
+	  echo ""
+
+	  tput op
+
+	fi
 
         cd ..
-
-        echo "--------------------"
       fi
     fi
 done

@@ -118,3 +118,7 @@ fi
 
 PATH=$PATH:/home/elbullazul/.local/bin
 alias oad=". oad"
+alias ogd=". ogd"
+alias otd=". otd"
+
+AZURRA="$HOME/Documents/Azurra_framework"

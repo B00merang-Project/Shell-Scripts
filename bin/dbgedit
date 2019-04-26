@@ -1,0 +1,3 @@
+#!/bin/bash
+
+GTK_DEBUG=interactive gedit
