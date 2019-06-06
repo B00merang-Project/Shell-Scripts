@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for D in *; do
-  if [ ! -f "${D}/.bsi" ]; then
+  if [ ! -f "${D}/autogen.sh" ]; then
     if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
       tput setaf 4
       echo -n "Checking status of '${D}' repository: "
