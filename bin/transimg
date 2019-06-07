@@ -22,7 +22,19 @@ args=("$@")      # Host all flags in the array
 # Number of args
 MAX=${#args[@]}
 
-while getopts o:r:w:h:g:a:e: option
+if [ "$1" == "--help" ]
+then
+  echo "TransImg Script <B00merang Project, (C) 2019>"
+  echo ""
+  echo "  -o   'OPERATION'   <string>  grayscale|resize|rotate"
+  echo "  -w   'WIDTH'       <int>     new height in pixels"
+  echo "  -h   'HEIGHT'      <int>     new height in pixels"
+  echo "  -a   'ANGLE'       <int>     new height in degrees (0<=360)"
+  echo "  -e   'FILENAME_@2' <string>  new file name extension"
+  exit 0
+fi
+
+while getopts o:w:h:a:e: option
 do
   case "${option}" in
     o)
