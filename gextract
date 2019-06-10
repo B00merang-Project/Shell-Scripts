@@ -1,0 +1,45 @@
+#!/bin/bash
+##############################################################################
+# Author: Peter Gordon <peter@thecodergeek.com>
+# License: Public Domain
+##############################################################################
+# gresource-extract.sh
+# Version: 1
+#
+# This Bash script is designed to extract all resource files in a given
+# GResource file, with the given base folder. For example, if a GResource file
+# contained the resource /org/foo/bar/baz.txt, and the base folder is given
+# as "/org/foo/", then the resource named /org/foo/bar/baz.txt in that file
+# would be extracted and written to bar/baz.txt in the current directory.
+##############################################################################
+# __ ChangeLog __
+# 2012-07-22 <peter@thecodergeek.com>
+# * Version 1
+#  - Initial public release
+##############################################################################
+
+# The GResource file name
+GR_FILE="gtk.gresource"
+
+# The base folder of  the extracted resources
+GR_BASEDIR="/org/gnome/"
+
+
+## Check for required utilities...
+for REQUIRED_PROG in gresource
+do
+    which ${REQUIRED_PROG} &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "Unable to find required program '${REQUIRED_PROG}' in PATH."
+        exit 1
+    fi
+done
+
+
+for RSRC in $(gresource list $GR_FILE)
+do
+    RSRC_FILE=$(echo "${RSRC#$GR_BASEDIR}")
+    mkdir -p $PWD/$(dirname "$RSRC_FILE") ||:
+    gresource extract "$GR_FILE" "$RSRC" > "$PWD/$RSRC_FILE"
+done
+
