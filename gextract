@@ -39,7 +39,7 @@ done
 for RSRC in $(gresource list $GR_FILE)
 do
     RSRC_FILE=$(echo "${RSRC#$GR_BASEDIR}")
-    mkdir -p $PWD/$(dirname "$RSRC_FILE") ||:
-    gresource extract "$GR_FILE" "$RSRC" > "$PWD/$RSRC_FILE"
+    mkdir -p $(dirname "$RSRC_FILE") ||:
+    gresource extract "$GR_FILE" "$RSRC" > "$RSRC_FILE"
 done
 
