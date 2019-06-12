@@ -80,7 +80,7 @@ do
   if [[ " ${formats[*]} " == *" $EXT "* ]]; then
     # Convert grayscale
     if [ $OP == 'grayscale' ]; then
-      convert "$IMAGE" -colorspace gray "$TMP/$NAME"
+      convert "$IMAGE" -colorspace gray "$TMP/$NAME$COM.$EXT"
     fi
     
     # Resize
