@@ -92,6 +92,10 @@ do
     if [ $OP == 'rotate' ] ; then
       convert "$IMAGE" -rotate "$ANGLE" "$TMP/$NAME$COM.$EXT"
     fi
+    
+    if [ $OP == 'invert' ] ; then
+      convert "$IMAGE" -channel RGB -negate "$TMP/$NAME$COM.$EXT"
+    fi
   fi
 done
 
