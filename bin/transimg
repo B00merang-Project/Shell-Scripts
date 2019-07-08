@@ -26,7 +26,7 @@ if [ "$1" == "--help" ]
 then
   echo "TransImg Script <B00merang Project, (C) 2019>"
   echo ""
-  echo "  -o   'OPERATION'   <string>  grayscale|resize|rotate|invert|colorize"
+  echo "  -o   'OPERATION'   <string>  grayscale|resize|rotate|invert|colorize|render"
   echo "  -w   'WIDTH'       <int>     new height in pixels"
   echo "  -h   'HEIGHT'      <int>     new height in pixels"
   echo "  -a   'ANGLE'       <int>     new height in degrees (0<=360)"
@@ -35,7 +35,7 @@ then
   exit 0
 fi
 
-while getopts o:w:h:a:e:c: option
+while getopts o:w:h:a:e:c:d option
 do
   case "${option}" in
     o)
@@ -103,6 +103,10 @@ do
     
     if [ $OP == 'colorize' ]; then
       convert "$IMAGE" -colorspace gray -fill "$COL" -tint 100 "$TMP/$NAME$COM.$EXT"
+    fi
+    
+    if [ $OP == 'render' ]; then
+      inkscape -z -e "$TMP/$NAME$COM.png" -w $WIDTH -h $HEIGHT "$IMAGE"
     fi
   fi
 done
