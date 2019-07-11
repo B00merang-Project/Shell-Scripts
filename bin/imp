@@ -1,8 +1,0 @@
-#!/bin/bash
-
-orgFile=$(readlink -e "_$1.scss")
-
-rm "_$1.scss"
-cp "$orgFile" .
-
-echo "Cloned '$1' from source"

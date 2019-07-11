@@ -1,5 +1,8 @@
 #!/bin/bash
 
+msg="$1"
+shift
+
 for D in *; do
     if [ ! -f "${D}/.bsi" ]; then
       if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
@@ -11,8 +14,8 @@ for D in *; do
           git config credential.helper store
 
           git add --all
-          git commit -m "$1"
-          git push
+          git commit -m "$msg"
+          git push $@
 
 	  tput setaf 4
 

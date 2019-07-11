@@ -1,0 +1,21 @@
+#!/bin/bash
+
+for arg in $@; do
+  case $arg in
+    help)
+      echo '<OPTIONS> cde|macos|macos9|win'
+    ;;
+    cde|beos)
+      gsettings set org.gnome.desktop.wm.preferences button-layout 'close:,minimize,maximize'
+    ;;
+    macos)
+      gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:'
+    ;;
+    macos9)
+      gsettings set org.gnome.desktop.wm.preferences button-layout 'close:,maximize,minimize'
+    ;;
+    win)
+      gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'
+    ;;    
+  esac
+done

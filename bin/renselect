@@ -1,9 +1,0 @@
-#!/bin/bash
-
-read -p "Files will be altered. Continue? (y/n)" -n 1 -r
-echo "" # new line
-
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  rename  's/selected/checked/' *
-fi
