@@ -5,11 +5,13 @@ alias licons="cd $HOME/.icons"
 alias lbin="cd $HOME/.local/bin"
 alias tmp="cd /tmp"
 alias shist="history | grep"
+alias ealias="nano $HOME/.bash_aliases"
+alias ralias="source $HOME/.bash_aliases"
 
 alias bril="cd $HOME/Github/Brilliance"
-alias oad="cd /Github/Azurra_framework"
+alias oad="cd $HOME/Github/Azurra_framework"
 alias gal="cd $HOME/Pictures/gallery"
-alias hub="cd /Github"
+alias hub="cd $HOME/Github"
 
 alias GDB="GTK_DEBUG=interactive"
 alias gwf='gtk3-widget-factory'
