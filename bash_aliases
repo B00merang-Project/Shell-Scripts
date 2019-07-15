@@ -12,6 +12,7 @@ alias bril="cd $HOME/Github/Brilliance"
 alias oad="cd $HOME/Github/Azurra_framework"
 alias gal="cd $HOME/Pictures/gallery"
 alias hub="cd $HOME/Github"
+alias docs="cd $HOME/Documents"
 
 alias GDB="GTK_DEBUG=interactive"
 alias gwf='gtk3-widget-factory'
@@ -21,3 +22,5 @@ alias ticompress="transimg -o resize -w 1360 -h 768 -e ''"
 alias gs="git status"
 alias gd="git diff"
 alias gp="git pull"
+alias gc="git commit"
+alias ga="git add"
