@@ -14,6 +14,7 @@ alias gal="cd $HOME/Pictures/gallery"
 alias hub="cd $HOME/Github"
 alias docs="cd $HOME/Documents"
 alias oadu="cd $HOME/Github/Azurra_framework_upstream"
+alias az="cd $HOME/Github/Azurra"
 
 alias GDB="GTK_DEBUG=interactive"
 alias gwf='gtk3-widget-factory'
