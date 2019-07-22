@@ -1,7 +1,5 @@
 # TransPack
 
-![transpack-logo](https://github.com/B00merang-Project/Shell-Scripts/blob/master/transpack.png)
-
 B00merang TransPack Script, for easy theme installation and application
 
 **Maintainer:** [Elbullazul](https://github.com/Elbullazul)
@@ -12,7 +10,8 @@ B00merang TransPack Script, for easy theme installation and application
 
 Latest Version: 2.0.1-release
 
-## This script now accepts the following flags:
+## This script now accepts the following flags
+
 - -h : get help and available flags for the script
 - --set-de : force-install a DE, should anything go wrong and the script not recognize your WM
 - -v : get script version and some info about the software
@@ -36,7 +35,5 @@ chmod +x transpack.sh
 ```
 
 ## Extra scripts
-- To unity: simple script to make uniti theme from compatible metacity theme
-- gtk-compile: make gtk gresource with your themes to improve speed and stability (gtk 3.10 and up only)
-
-**Webpage :** http://b00merang.weebly.com/transpack.html
+- To unity: simple script to make unity theme from compatible metacity theme
+- gtk-compile: make gtk gresource with your themes to improve speed and stability (gtk 3.10 and up)
