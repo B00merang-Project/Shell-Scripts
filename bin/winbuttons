@@ -3,7 +3,7 @@
 for arg in $@; do
   case $arg in
     help)
-      echo '<OPTIONS> cde|macos|macos9|win'
+      echo '<OPTIONS> cde|macos|macos9|win|gnome|openlook'
     ;;
     cde|beos)
       gsettings set org.gnome.desktop.wm.preferences button-layout 'close:,minimize,maximize'
@@ -16,6 +16,12 @@ for arg in $@; do
     ;;
     win)
       gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'
-    ;;    
+    ;;
+    gnome)
+      gsettings set org.gnome.desktop.wm.preferences button-layout ':close'
+    ;;
+    openlook)
+      gsettings set org.gnome.desktop.wm.preferences button-layout 'close:'
+    ;;
   esac
 done
