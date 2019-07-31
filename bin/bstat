@@ -1,30 +1,29 @@
 #!/bin/bash
 
 for D in *; do
-  if [ ! -f "${D}/autogen.sh" ]; then
-    if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
-      tput setaf 4
-      echo -n "Checking status of '${D}' repository: "
+  if ls ${D}/*.sh &>/dev/null; then continue; fi
+  if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
+    tput setaf 4
+    echo -n "Checking status of '${D}' repository: "
 
-      cd "${D}"
-      OUT=$(git status)
+    cd "${D}"
+    OUT=$(git status)
 
-      if [[ "$OUT" = *"nothing to commit"* ]]; then
-        tput setaf 2
-        echo "Up to date"
+    if [[ "$OUT" = *"nothing to commit"* ]]; then
+      tput setaf 2
+      echo "Up to date"
+    else
+      if [ "$1" == "-d" ]; then
+        tput op
+        echo "$OUT"
       else
-        if [ "$1" == "-d" ]; then
-          tput op
-          echo "$OUT"
-        else
-          tput setaf 1
-          echo "Needs updating"
-        fi
+        tput setaf 1
+        echo "Needs updating"
       fi
-
-      tput op
-
-      cd ..
     fi
+
+    tput op
+
+    cd ..
   fi
 done
