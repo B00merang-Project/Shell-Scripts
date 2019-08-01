@@ -15,13 +15,6 @@ COM='@2'
 # Op vars
 OP=''
 
-# Process arguments
-declare -a flags # Declare a new array
-args=("$@")      # Host all flags in the array
-
-# Number of args
-MAX=${#args[@]}
-
 if [ "$1" == "--help" ]
 then
   echo "TransImg Script <B00merang Project, (C) 2019>"
