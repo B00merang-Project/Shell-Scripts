@@ -7,6 +7,8 @@ alias tmp="cd /tmp"
 alias shist="history | grep"
 alias ealias="nano $HOME/.bash_aliases"
 alias ralias="source $HOME/.bash_aliases"
+alias edconf="nano $HOME/.bashrc"
+alias reconf="source $HOME/.bashrc"
 
 alias bril="cd $HOME/Github/Brilliance"
 alias oad="cd $HOME/Github/Azurra_framework"
