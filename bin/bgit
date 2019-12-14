@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # save user login creds
-git config credential.helper store
+if [ -d .git ]; then
+  git config credential.helper store
 
-git add --all
-git commit -m "$1"
-git push
+  git add --all
+  git commit -m "$1"
+  git push
+else
+  echo "Not a git repository"
+fi
