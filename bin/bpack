@@ -1,0 +1,29 @@
+#!/bin/bash
+
+msg="$1"
+shift
+
+for D in *; do
+  if ls ${D}/*.sh &>/dev/null; then continue; fi
+  if [ -d "${D}" ] && [ -d "${D}/.git" ]; then
+    cd "${D}"
+    OUT=$(git status)
+
+    if [[ "$OUT" != *"nothing to commit"* ]]; then
+      git config credential.helper store
+
+      git add --all
+      git commit -m "$msg"
+
+      tput setaf 4
+
+      echo ""
+        echo "Pushing from local '${D}' to origin"
+      echo ""
+
+      tput op
+    fi
+
+    cd ..
+  fi
+done
