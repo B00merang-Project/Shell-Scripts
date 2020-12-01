@@ -2,7 +2,7 @@
 
 for arg in $@; do
   case $arg in
-    help)
+    -h|--help|help)
       echo '<OPTIONS> cde|macos|macos9|win|gnome|openlook'
     ;;
     cde|beos)

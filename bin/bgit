@@ -3,10 +3,20 @@
 # save user login creds
 if [ -d .git ]; then
   git config credential.helper store
-
-  git add --all
-  git commit -m "$1"
-  git push
+  
+  # Added to prevent conflicts when updated from other VM
+  echo "Checking for upstream changes..."
+  
+  git fetch
+  OUT=$(git status -sb)
+  
+  if [[ "$OUT" = *"behind"* ]]; then
+    echo "[WARNING] Upstream changes may conflict with local changes"
+  else
+    git add --all
+    git commit -m "$1"
+    git push
+  fi
 else
   echo "Not a git repository"
 fi
