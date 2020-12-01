@@ -11,18 +11,28 @@ for D in *; do
 
     if [[ "$OUT" != *"nothing to commit"* ]]; then
       git config credential.helper store
+      
+      # Added to prevent conflicts when updated from other VM
+      echo "Checking for upstream changes..."
+      
+      git fetch
+      OUT=$(git status -sb)
+      
+      if [[ "$OUT" = *"behind"* ]]; then
+        echo "[WARNING] Upstream changes may conflict with local changes"
+      else
+        git add --all
+        git commit -m "$msg"
+        git push
 
-      git add --all
-      git commit -m "$msg"
-      git push
+        tput setaf 4
 
-      tput setaf 4
+        echo ""
+          echo "Pushing from local '${D}' to origin"
+        echo ""
 
-      echo ""
-        echo "Pushing from local '${D}' to origin"
-      echo ""
-
-      tput op
+        tput op
+      fi
     fi
 
     cd ..
