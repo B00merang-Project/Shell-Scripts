@@ -4,6 +4,8 @@ if [ ! -d $HOME/.themes ]; then
     mkdir $HOME/.themes
 fi
 
+echo "Linking repositories in $HOME/.themes"
+
 for D in *; do
     if [ -d "${D}" ]; then
         if [ -d "${D}/gtk-3.0" ]; then
