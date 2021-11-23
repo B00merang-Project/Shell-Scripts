@@ -1,0 +1,9 @@
+# Aliases
+alias gthemes="cd /usr/share/themes"
+alias gicons="cd /usr/share/icons"
+alias lthemes="cd $HOME/.themes"
+alias licons="cd $HOME/.icons"
+alias lbin="cd $HOME/.local/bin"
+
+alias oad="cd $HOME/Github/Azurra_framework"
+alias hub="cd $HOME/Github"

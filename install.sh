@@ -1,16 +1,29 @@
 #!/bin/bash
 
-echo -n "Linking aliases file (~/.bash_aliases)... "
-ln -s $PWD/bash_aliases $HOME/.bash_aliases
+echo -n "Linking aliases file ($HOME/.b00merang_aliases)... "
+if [ ! -f $HOME/.b00merang_aliases ]
+then
+  ln -s $PWD/b00merang_aliases $HOME/.b00merang_aliases
+fi
 echo "Done"
 
-echo -n "Linking bin to local path (~/.local/bin)... "
+echo "source $HOME/.b00merang_aliases" >>$HOME/.bashrc
+
+echo "Linking commands ($HOME/.local/bin)... "
 if [ ! -d $HOME/.local ]
 then
   mkdir $HOME/.local
+elif [ ! -d $HOME/.local/bin ]
+then
+  mkdir $HOME/.local/bin
 fi
 
-ln -s $PWD/bin $HOME/.local
+for file in bin/*
+do
+  echo "Linking $file"
+  ln -s "$PWD/$file" $HOME/.local/bin/
+done
+echo "Done"
 
 read -p "Install packages? (y/n/): " yesno
 
@@ -24,7 +37,7 @@ then
     sudo apt install -y sassc gtk-3-examples imagemagick
   elif [ -f /bin/dnf ]
   then
-    sudo dnf install -y sassc gtk-devel imagemagick
+    sudo dnf install -y sassc gtk3-devel gtk4-devel ImageMagick
   fi
 fi
 
