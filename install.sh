@@ -7,7 +7,15 @@ then
 fi
 echo "Done"
 
-echo "source $HOME/.b00merang_aliases" >>$HOME/.bashrc
+if [ ! -f $HOME/.bashrc ]
+then
+  echo "source $HOME/.b00merang_aliases" >>$HOME/.bashrc
+fi
+
+if [ ! -f $HOME.zshrc ]
+then
+  echo "source $HOME/.b00merang_aliases" >>$HOME/.zshrc
+fi
 
 echo "Linking commands ($HOME/.local/bin)... "
 if [ ! -d $HOME/.local ]
