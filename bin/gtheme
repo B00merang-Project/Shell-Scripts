@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ ! -z "$1" ]
+then
+  gsettings set org.gnome.desktop.interface gtk-theme "$1"
+else
+  echo "Missing argument: theme name"
+fi
