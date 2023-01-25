@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# declare variables
+declare -a GTK4_CONFIG
+declare -a USER_THEMES
+declare -a SHARED_THEMES
+
+GTK4_CONFIG="$HOME/.config/gtk-4.0"
+
+# uninstall theme if received argument
+[ "$1" == '-u' ] || [ "$1" == "--uninstall" ] && [ ! -z $GTK4_CONFIG ] && rm -rf $GTK4_CONFIG/* && echo "Uninstalled GTK4 theme" && exit
+
 # greet the user!
 echo "  _        ___     ___                                                    
  | |__    / _ \   / _ \   _ __ ___     ___   _ __    __ _   _ __     __ _ 
@@ -11,12 +21,8 @@ echo "  _        ___     ___
 echo "Welcome to b00merang's GTK 4 theme installer"
 read -n 1 -s -r -p "Press any key to continue..."
 
-# declare variables
-declare -a USER_THEMES
-declare -a SHARED_THEMES
-
-# check if gtk-4.0 folder present
-[ ! -d "$HOME/.config/gtk-4.0" ] && printf "\ngtk-4.0 folder not found, you probably are not on using gtk-4.0\n" && exit
+# check if gtk-4.0 folder present, create it if not
+[ ! -d "$GTK4_CONFIG" ] && mkdir "$GTK4_CONFIG" 
 
 # TODO: override with `/usr/share/themes` if flag received
 theme_folder="$HOME/.themes"
@@ -41,7 +47,7 @@ echo
 
 # show themes in 2 columns with a number
 pr -2T <<< $(for (( t=1; t<=${#USER_THEMES[@]}; t++ )); do
-  echo "  $t `basename ${USER_THEMES[$(($t - 1))]}`"
+  echo "  $t `basename "${USER_THEMES[$(($t - 1))]}"`"
 done)
 
 input=""
@@ -61,7 +67,7 @@ done
 selected_theme=${USER_THEMES[$input - 1]}
 
 # if another theme is already present in ~/gtk-4.0, ask for confirmation
-if [ -f "$HOME/.config/gtk-4.0/gtk.css" ]; then
+if [ -f "$GTK4_CONFIG/gtk.css" ]; then
   read -p "A theme is already installed, do you want to overwrite it? (y/N) " yesno
   
   [[ ! $yesno =~ ^[Yy]$ ]] && echo "Operation was cancelled" && exit
@@ -70,6 +76,6 @@ fi
 # copy everything in $selected_theme/gtk-4.0 to ~/.config/gtk-4.0
 echo "Copying theme '`basename $selected_theme`'"
 
-cp -R "$selected_theme/gtk-4.0/"* "$HOME/.config/gtk-4.0"
+cp -R "$selected_theme/gtk-4.0/"* "$GTK4_CONFIG"
 
 echo "Operation complete"
