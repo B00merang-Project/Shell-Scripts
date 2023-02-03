@@ -45,7 +45,7 @@ then
     sudo apt install -y sassc gtk-3-examples imagemagick
   elif [ -f /bin/dnf ]
   then
-    sudo dnf install -y sassc gtk3-devel gtk4-devel ImageMagick
+    sudo dnf install -y sassc gtk3-devel gtk4-devel gtk4-devel-tools ImageMagick
   fi
 fi
 
