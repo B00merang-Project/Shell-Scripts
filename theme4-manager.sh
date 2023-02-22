@@ -10,6 +10,9 @@ GTK4_CONFIG="$HOME/.config/gtk-4.0"
 # uninstall theme if received argument
 [ "$1" == '-u' ] || [ "$1" == "--uninstall" ] && [ ! -z $GTK4_CONFIG ] && rm -rf $GTK4_CONFIG/* && echo "Uninstalled GTK4 theme" && exit
 
+# show help
+[ "$1" == '-h' ] || [ "$1" == '--help' ] && echo "Available options: [ -h | --help ] [ -u | --uninstall ]" && exit
+
 # greet the user!
 echo "  _        ___     ___                                                    
  | |__    / _ \   / _ \   _ __ ___     ___   _ __    __ _   _ __     __ _ 
