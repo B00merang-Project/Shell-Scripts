@@ -25,7 +25,7 @@ echo "Welcome to b00merang's GTK 4 theme installer"
 read -n 1 -s -r -p "Press any key to continue..."
 
 # check if gtk-4.0 folder present, create it if not
-[ ! -d "$GTK4_CONFIG" ] && mkdir "$GTK4_CONFIG" 
+[ ! -d "$GTK4_CONFIG" ] && mkdir "$GTK4_CONFIG"
 
 # TODO: override with `/usr/share/themes` if flag received
 theme_folder="$HOME/.themes"
@@ -35,8 +35,8 @@ if [ -d $theme_folder ]; then
   for theme in "$theme_folder/"*; do
     [ ! -d "$theme/gtk-4.0" ] && continue
     [ ! -f "$theme/gtk-4.0/gtk.css" ] && continue
-    
-    # store paths in array 
+
+    # store paths in array
     USER_THEMES+=("$theme")
   done
 else
@@ -79,4 +79,4 @@ fi
 # copy everything in $selected_theme/gtk-4.0 to ~/.config/gtk-4.0
 cp -R "$selected_theme/gtk-4.0/"* "$GTK4_CONFIG"
 
-echo "Copied theme '`basename $selected_theme`'"
+echo "Copied theme '`basename "$selected_theme"`'"
