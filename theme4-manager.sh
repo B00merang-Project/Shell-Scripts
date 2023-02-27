@@ -62,7 +62,7 @@ while true; do
   if [ $input -gt 0 ] && [ $input -le $theme_count ]; then
     break;
   fi
-  
+
   # if answer not correct, keep asking until it is, or user closes script
   echo "Invalid number: $input"
 done
@@ -72,13 +72,11 @@ selected_theme=${USER_THEMES[$input - 1]}
 # if another theme is already present in ~/gtk-4.0, ask for confirmation
 if [ -f "$GTK4_CONFIG/gtk.css" ]; then
   read -p "A theme is already installed, do you want to overwrite it? (y/N) " yesno
-  
+
   [[ ! $yesno =~ ^[Yy]$ ]] && echo "Operation was cancelled" && exit
 fi
 
 # copy everything in $selected_theme/gtk-4.0 to ~/.config/gtk-4.0
-echo "Copying theme '`basename $selected_theme`'"
-
 cp -R "$selected_theme/gtk-4.0/"* "$GTK4_CONFIG"
 
-echo "Operation complete"
+echo "Copied theme '`basename $selected_theme`'"
